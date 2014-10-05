@@ -1,0 +1,276 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+The complexity of the primate visual cortex at large scales presents a major
+ challenge for modelling.
+ Each area receives input from 8-12 other areas (ref), and each of these
+ receives input from other partially overlapping groups of areas, etc.
+ In most models, this complexity has typically been managed in one of two
+ ways: either by ignoring all but the most prominent feedforward connections
+ (refs) or by ignoring the presumed information processing roles of each
+ area and focusing entirely on large-scale dynamics (refs).
+ 
+\end_layout
+
+\begin_layout Standard
+Here we propose to manage this complexity in a way that takes inspiration
+ form software design.
+ Large software projects routinely involve large, loosely coordinated teams
+ that work on hundreds of interacting components, which are continuously
+ revised over years as understanding of the design problem evolves.
+ The most important approach for managing software complexity is encapsulation,
+ i.e.
+ the hiding of the implementation details of any component from the rest
+ of the system.
+ [TODO: example] This has allowed routine development of software that is
+ too complex for any one person to understand.
+ 
+\end_layout
+
+\begin_layout Standard
+We propose an approach to encapsulation in large-scale brain models.
+ Specifically, we propose to divide modelling into three phases.
+ The goal of the first phase, which we call 
+\begin_inset Quotes eld
+\end_inset
+
+statistical modelling
+\begin_inset Quotes erd
+\end_inset
+
+, is to produce realistic spike patterns for many visual areas through any
+ means possible, including computer vision methods and manual labeling of
+ data.
+ This allows a second phase, which we call 
+\begin_inset Quotes eld
+\end_inset
+
+area modelling
+\begin_inset Quotes erd
+\end_inset
+
+, in which statistical models of many areas serve as inputs to biophysical
+ neuron models of individual areas.
+ In the final phase, 
+\begin_inset Quotes eld
+\end_inset
+
+network modelling
+\begin_inset Quotes erd
+\end_inset
+
+, the mechanistic area models are connected to each other, and the statistical
+ models are eliminated from the network.
+ Using this approach, a modeller need only ever be concerned with a small
+ part of the network at any given time.
+ As is the case with large software systems, we anticipate that there may
+ be a great deal of work at the integration phase.
+ 
+\end_layout
+
+\begin_layout Standard
+The focus of this paper is preliminary experience with the first phase of
+ this strategy.
+ In particular, we present statistical models of ~100 million neurons in
+ macaque V1, MT, and IT.
+ These models are derived from data in the electrophysiology literature,
+ mostly with artificial stimuli (e.g.
+ small isolated images; random dot patches).
+ We also drive the complete model with a stereo video dataset that has labeled
+ object identities, ground-truth binocular disparity, and eye movements
+ recorded from humans.
+ We discuss the basic issues encountered in this phase, including optimization
+ methods to fit tuning curves and interpolation methods to generate maps
+ of large numbers of model neurons.
+ 
+\end_layout
+
+\begin_layout Section
+Methods 
+\end_layout
+
+\begin_layout Itemize
+extracting spike rates from figures [TODO: there is a tool for this; also
+ what Omid did]
+\end_layout
+
+\begin_layout Itemize
+model selection heuristics (small number of fields; small number of nonlineariti
+es like normalization and sparseness) 
+\end_layout
+
+\begin_layout Itemize
+stimulus generation (psychopy?)
+\end_layout
+
+\begin_layout Itemize
+optimization procedures 
+\end_layout
+
+\begin_layout Itemize
+statistics and combining tuning curves 
+\end_layout
+
+\begin_layout Itemize
+fitting random samples of the response property distribution 
+\end_layout
+
+\begin_layout Itemize
+approximating maps 
+\end_layout
+
+\begin_layout Itemize
+regression to produce artificial maps 
+\end_layout
+
+\begin_layout Itemize
+KITTI naturalistic dataset 
+\end_layout
+
+\begin_layout Itemize
+estimating visual motion (with aperture problem solved and without) 
+\end_layout
+
+\begin_layout Itemize
+disparity from ground-truth depth 
+\end_layout
+
+\begin_layout Itemize
+eye tracking (heat maps and selection)
+\end_layout
+
+\begin_layout Section
+Results 
+\end_layout
+
+\begin_layout Itemize
+example tuning curves (maybe others in supplementary material) 
+\end_layout
+
+\begin_layout Itemize
+example dynamics 
+\end_layout
+
+\begin_layout Itemize
+example maps
+\end_layout
+
+\begin_layout Subsection
+V1
+\end_layout
+
+\begin_layout Subsection
+MT
+\end_layout
+
+\begin_layout Subsection
+IT
+\end_layout
+
+\begin_layout Subsection
+Naturalistic Stimulus
+\end_layout
+
+\begin_layout Itemize
+spike rasters, fMRI? 
+\end_layout
+
+\begin_layout Section
+Discussion 
+\end_layout
+
+\begin_layout Itemize
+The macaque cortex has been intensively studied since XX, and most of the
+ available information about its function is contained in journal articles.
+ Our approach aims to integrate such data in a systematic way.
+ 
+\end_layout
+
+\begin_layout Itemize
+This paper describes preliminary experiences and methodological considerations
+ related to developing a data-driven large-scale statistical model of the
+ macaque visual cortex 
+\end_layout
+
+\begin_layout Itemize
+Such a model, once it is expanded to include other visual areas, will be
+ very useful as a test harness for mechanistic models of individual areas
+ which incorporate a large fraction of the actual inputs to these areas
+ (including bottom-up and top-down signals) 
+\end_layout
+
+\begin_layout Itemize
+Future work: decisions should arise collectively, not quite clear how to
+ do this, although we can make the activity look right by having a set of
+ stochastic underlying decision variables 
+\end_layout
+
+\begin_layout Itemize
+Validate with monkey fMRI?
+\end_layout
+
+\end_body
+\end_document
