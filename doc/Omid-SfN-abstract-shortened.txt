@@ -1,0 +1,10 @@
+﻿One of the major barriers to modelling the primate visual cortex is the complexity of the network. Since each visual area receives input from many other areas, modelling any subnetwork without ignoring most of its inputs is difficult. One possible way to mitigate this problem is to develop phenomenological (stand-alone) models of various visual areas, which produce realistic spike patterns, and then use them as inputs to more physiologically detailed models of other areas. We are developing such a phenomenological model of primate area MT and hope to use it, as input to mechanistic models of the other areas to which MT projects (e.g. V1, V2, V4, TEO). 
+
+We developed the model structure and estimated distributions of its parameters using data from the electrophysiology literature. Each physical location in MT is associated with a probability density function over the model parameters. Our model consists of topographically organized units with lateral interactions [1], which are driven by linear kernels that combine input from several fields. The fields include motion, binocular disparity, contrast, and attention. Some of these (e.g. contrast) can be computed fairly directly from video input. Others (e.g. motion and disparity) are estimated using more sophisticated methods from computer vision. Finally, the attention field is manually defined in each frame of the input videos. These methods produce time-varying spike rates, which we convert to spike trains using a Poisson model with correlations. 
+
+Our approach is data-driven, in that we simply try to produce statistically realistic spike trains without making any assumptions about mechanisms. On the other hand, it is necessary to extrapolate beyond published data in order for the whole MT model population to respond to a variety of stimuli.
+
+1. Rubin, D. B., Van Hooser, S. D., & Miller, K. D. (2015). Neuron, 85(2), 402-417.
+2. Treue, S., & Trujillo, J. C. M. (1999). Nature, 399(6736), 575-579.
+3. Pack, C. C., Hunter, J. N., & Born, R. T. (2005). Journal of Neurophysiology, 93(3), 1809-1815.
+4. Pack, C. C., & Born, R. T. (2001). Nature, 409(6823), 1040-2.
