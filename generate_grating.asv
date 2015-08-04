@@ -27,12 +27,15 @@ function gr=generate_grating(freq, theta, fsize, phase)
     
     mask( sqrt(mx.^2 + my.^2) > fsize/2  ) = 0;
     
-%     gr = sin( freq*xy + phase ).*mask;
-    gr = cos( freq*xy + phase );
+    imshow(mask)
+    
+    gr = sin( freq*xy + phase ).*mask;
+    
+    figure
     % normalize the grating:
-%     gr = gr + abs(min(gr(:)));
-%     
-%     gr = gr./max(gr(:));
+    gr = gr + min(gr(:));
+    
+    gr = gr/max(gr(:));
     
     
 %     gr = zeros(fsize);
