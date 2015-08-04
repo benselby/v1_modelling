@@ -1,0 +1,166 @@
+% A model of V1 orientation columns using gabor filters as receptive
+% fields and divisive normalization for contour integration and surround
+% inhibition
+%
+% Ben Selby, July 2014
+
+clear all
+close all
+
+% Number of neurons in this orientation column
+n_neurons = 8;
+
+% baseline firing rate
+baseline = 10;
+
+% Gabor filter parameters
+sig_x = 0.5;
+sig_y = 0.05;
+theta = 0:2*pi/n_neurons:2*pi;
+phi = 0;
+k = pi/8;
+fsize = 25;
+
+% Build the filter bank which is effectively a single population of neurons
+% whose receptive fields share size and position - one gabor filter per
+% neuron
+
+filter_bank = zeros(fsize, fsize, n_neurons);
+
+for i=1:n_neurons
+    filter_bank(:,:,i) = gabor(sig_x, sig_y, theta(i), phi, k, fsize);
+%     gb = gabor(sig_x, sig_y, theta(i), phi, k, size);
+%     figure(i);
+%     mesh(gb);
+end
+
+figure()
+fb_img = reshape(filter_bank, fsize, fsize*n_neurons);
+imshow(mat2gray(fb_img));
+title('Orientation Column Receptive Fields')
+
+%% Develop input images
+bar_img = mat2gray(gabor(0.5, 0.05, pi/6, 0, pi/8, 25));
+grating_img = mat2gray(gabor(0.1, 0.05, pi/6, 0, pi/8, 25));
+
+% figure()
+% subplot(1,2,1)
+% imshow(bar_img)
+% title('Input Image - Bar')
+% subplot(1,2,2)
+% imshow(grating_img)
+% title('Input Image - Grating')
+
+%% Get individual neuron drive: 
+% sum of element-wise product of each filter with the input image
+input_drives = zeros(n_neurons, 1);
+for i=1:n_neurons
+    input_drives(i) = sum(sum(filter_bank(:,:,i).*bar_img));
+end
+
+
+%% Display the curve of a single neuron for a complete range of orientations
+neuron_RF = filter_bank(:,:,2);
+theta_range = linspace(0, pi);
+drive = zeros(100,1);
+drive_50 = drive;
+for i=1:100
+    input = mat2gray(gabor(0.5, 0.05, theta_range(i), 0, pi/8, fsize));
+    in_50 = 0.5*(input-0.5)+0.5;
+    drive(i) = sum(sum(neuron_RF.*input));
+    drive_50(i) = sum(sum(neuron_RF.*in_50));
+end
+
+figure()
+subplot(1,2,1)
+test_img = mat2gray(gabor(0.5, 0.05, theta_range(25), 0, pi/8, fsize));
+imshow(mat2gray(test_img));
+title('Sample Input Image')
+subplot(1,2,2)
+imshow(mat2gray(neuron_RF))
+title('Neuron Receptive Field')
+
+% figure()
+% mesh(filter_bank(:,:,2))
+
+figure()
+degree_range = theta_range.*180/pi;
+subplot(1,2,1)
+plot(degree_range, drive)
+title('Orientation Response - Input Drive')
+xlabel('Orientation (Degrees)')
+ylabel('Input Drive')
+
+% % Normalize the input drive by the gabor's max value
+% norm_drive = drive./max(max(neuron_RF));
+% norm_drive50 = drive_50./max(max(neuron_RF));
+% 
+% for i=1:100
+%     if norm_drive(i) < baseline
+%         norm_drive(i) = baseline;
+%     end
+%     if norm_drive50(i) < baseline
+%         norm_drive50(i) = baseline;
+%     end
+% end
+
+% Try using LIF model to produce spikes
+tauRC = 0.1;
+tauRef = 10;
+
+spike_rate = 1/(tauRef - tauRC*log(1-1./drive));
+
+subplot(1,2,2)
+hold on
+plot(degree_range, spike_rate)
+% plot(degree_range, norm_drive)
+% plot(degree_range, norm_drive50, 'k--');
+xlabel('Orientation (Degrees)')
+ylabel('Spikes / second')
+
+
+%% Spike Variance with Contrast
+contrast_range = 0:0.1:1;
+contrast_response = zeros(size(contrast_range,2), 1);
+c_drive = contrast_response;
+for i=1:size(contrast_range,2)
+    in_img = contrast_range(i)*(test_img-0.5)+0.5;
+    c_drive(i) = sum(sum(neuron_RF.*in_img));
+end
+
+contrast_response = c_drive./max(max(neuron_RF));
+
+norm_drive = sum(sum(neuron_RF.*test_img));
+n = 2;
+sigma = 2;
+norm_response = zeros(size(contrast_range,2),1);
+for i=1:size(contrast_range,2)
+    norm_response(i) = norm_drive*contrast_range(i)^n/(sigma^n + contrast_range(i));
+end
+
+figure()
+hold on
+plot(contrast_range, norm_response, 'r')
+title('Peak Neuron Response vs Grating Contrast')
+xlabel('Grating Contrast (%)')
+ylabel('Response (spikes / second)')
+
+% subplot(1,2,1)
+% imshow(test_img)
+% subplot(1,2,2)
+% imshow(0.9*(test_img-0.5)+0.5)
+% axis([min(degree_range) max(degree_range) 0 1])
+
+%% Divisive Normalization: 
+% calculate the individual neuron firing based on normalization caused by 
+% other neurons also being stimulated in the orientation column
+
+responses = zeros(n_neurons, 1);
+sigma = 1;
+gamma = 1;
+n = 2;
+for i=1:n_neurons
+    responses(i) = gamma*input_drives(i)^n/(sigma^n + (sum(input_drives)-input_drives(i))^n);
+end
+
+responses

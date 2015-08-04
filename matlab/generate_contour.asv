@@ -1,0 +1,14 @@
+% A function for generating images made up of two bars for contour
+% integration models based on Kapadia et al., 1995 - currently generates
+% vertical coaxial line segments only
+% Parameters: 
+% separation: of line segment (degrees)
+% scale: pixels per degree horizontal/vertical
+% max_sep: the maximum allowable separation of 
+% fsize: the size of 
+function img = generate_contour(separation, scale, max_sep, fsize)
+    img = zeros(2*fsize+round(separation*scale), fsize);
+    size(img)
+    img(1:fsize, 12:14) = 1;
+    img(end-fsize+1:end, 12:14) = 1;
+end

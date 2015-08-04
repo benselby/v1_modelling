@@ -1,0 +1,64 @@
+%
+% A definition of the v1_neuron class which describes the individual
+% neuron used in the RF model
+%
+
+classdef v1_neuron
+
+    properties
+        max_rate
+        bandwidth
+        orient_pref
+        fsize
+        RF
+        gain
+        j_bias
+        rc_factor
+    end
+    
+    methods
+        
+        % Constructor which generates an RF for orientation
+        % max_rate - the maximum firing rate 
+        % bandwidth - the total orientation bandwidth which produces a
+        % response (degrees)
+        % orient_pref - neuron's preferred orientation
+        % fsize - size of square receptive field (pixels)
+        function neuron = v1_neuron(max_rate, bandwidth, orient_pref, fsize)
+            if nargin ~= 0
+                neuron.max_rate = max_rate;
+                neuron.bandwidth = bandwidth;
+                neuron.orient_pref = orient_pref;
+                neuron.fsize = fsize;
+                neuron.RF = generate_RF(bandwidth, orient_pref, fsize);
+                [neuron.gain neuron.j_bias neuron.rc_factor] = generate_LIF_params(max_rate, orient_pref, bandwidth, neuron.RF);        
+            end       
+        end
+        
+        % Method for getting the neuron's response to some stimulus wherein
+        % time is the 3rd dimension
+        function a = get_response(obj, stimulus)
+            a = zeros( size(stimulus,3), 1 );
+            raw = zeros( size(stimulus,3), 1 );
+            
+            for i=1:length(a)
+                raw(i) = sum(sum(stimulus(:,:,i).*obj.RF));
+            end
+            
+            a = LIF_param_response([obj.gain obj.j_bias obj.rc_factor], raw);
+        end
+        
+        % Method for getting the neuron's response over a range of
+        % orientations
+        function a = get_response_range(obj)
+            test_stim = zeros(obj.fsizem obj.fsize, 20);
+            o = linspace(-180,180, 20);
+            for i=1:20
+                test_stim(:,:,i) = generate_bar(o(i), obj.fsize);
+            end
+            a = get_response(
+        end
+        
+    end
+
+end
