@@ -22,6 +22,7 @@ function a = LIF_sfreq_response(gabor_params, input_data)
         J(f) = gain*sum(sum(neuronRF.*grating_bank(:,:,f))) + J_bias; 
     end
     
+    
     J(J<1) = 0;
     a = 1./(tau_ref - tau_RC.*log(1 - (1./J)));
     a=a';    

@@ -10,8 +10,8 @@ rate     = [58 50 44 32 36  29  22]; % spikes per second
 sep_data = [32 49 67 84 100 116 135]; % separation (arc min)
 
 % For figure D
-sep_data = [25 40 55 70 80 95 110]; % separation (arc min)
-rate     = [15 12 19 25 15 7  9]; % spikes per second
+% sep_data = [25 40 55 70 80 95 110]; % separation (arc min)
+% rate     = [15 12 19 25 15 7  9]; % spikes per second
 
 max_sep = max(sep_data);
     
@@ -73,12 +73,19 @@ neural_params = xmulti;
 
 [estimate, rf_spikes] = LIF_contour_response(neural_params, sep_data);
 figure();
-plot(sep_data, rate, 'ro-', sep_data, estimate, '*-', sep_data, rf_spikes, 'k-x')
-set(gca,'FontSize',18);
-title('V1 Coaxial Facilitation')
-xlabel('Coaxial Separation (min. of arc)')
-ylabel('Response (Spikes / second)')
-legend('Kapadia et al. Data', 'Model Approximation', 'Classical RF Alone - Model')
+hold on
+plot(sep_data, rate, 'bo-', sep_data, estimate, 'ro-', 'LineWidth', 2)
+plot(sep_data, rf_spikes, 'k-x', 'LineWidth', 1)
+title('Coaxial Facilitation','FontSize',28)
+xlabel('Coaxial Separation (min. of arc)','FontSize',24)
+ylabel('Response (Spikes / second)','FontSize',24)
+legend('Kapadia et al. Data', 'Model Approximation', 'Classical RF Alone - Model','FontSize',16)
+
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 4.75 4.75];
+fig.PaperPositionMode = 'manual';
+print('matlab_figs/contour_facil','-depsc','-r0')
 
 surroundRF = gabor(neural_params(1), neural_params(2), theta, phi, k, fsize);
 % figure

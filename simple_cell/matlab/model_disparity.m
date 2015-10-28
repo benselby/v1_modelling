@@ -46,8 +46,8 @@ end
     
 % Set lower and upper bounds for variables being optimized
 % Variable order: [ sig_x sig_y theta phi_left phi_right k gain j_bias rc ]
-lb = [2  2  0    0    0    1     0.05  -100  1];
-ub = [100 100 pi pi/2 pi/2 2*pi*6  200   100  10]; 
+lb = [2   2   0  0    0    1       0.05  -100  1];
+ub = [100 100 pi pi/2 pi/2 2*pi*6  200   100   10]; 
 
 numIter = 1;
 xmulti = zeros(numIter,9);
@@ -64,11 +64,17 @@ neural_params = xmulti;
 
 estimate = LIF_disp_response(neural_params, disparity );
 figure();
-plot(disparity, rate, 'ro-', disparity, estimate, '*-')
-title('V1 Disparity Tuning')
-xlabel('Dispartiy (degrees)')
-ylabel('Response (Spikes / second)')
-legend('Cumming and Parker Data', 'Model Approximation')
+plot(disparity, rate, 'bo-', disparity, estimate, 'ro-', 'LineWidth', 2)
+title('Disparity Tuning', 'FontSize', 28)
+xlabel('Disparity (degrees)', 'FontSize', 24)
+ylabel('Response (Spikes / second)', 'FontSize', 24)
+legend('Cumming and Parker Data', 'Model Approximation', 'FontSize', 16)
+
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 4.75 4.75];
+fig.PaperPositionMode = 'manual';
+print('matlab_figs/disparity_tuning','-depsc','-r0')
 
 figure();
 leftRF = gabor(neural_params(1), neural_params(2), neural_params(3), neural_params(4), neural_params(6), fsize);

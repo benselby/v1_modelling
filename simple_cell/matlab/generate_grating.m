@@ -1,8 +1,11 @@
 % Generate a sinusoidal grating
-function gr=generate_grating(freq, theta, fsize, phase)
+function gr=generate_grating(freq, theta, fsize, phase, normalize)
 
     if nargin < 4
         phase = 0;
+    end
+    if nargin < 5
+        normalize = 0;
     end
     
     X = 1:fsize;                           % X is a vector from 1 to imageSize
@@ -14,6 +17,10 @@ function gr=generate_grating(freq, theta, fsize, phase)
     XYt = Xt + Yt;                      % sum X and Y components
     XYf = XYt * freq * 2*pi;                % convert to radians and scale by frequency
     gr = sin( XYf + phase );                   % make 2D sinewave
+    
+    if normalize==1
+        gr = mat2gray(gr);
+    end
     
 %     gr = zeros(fsize);
 %     for i=1:fsize

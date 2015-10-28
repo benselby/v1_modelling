@@ -107,7 +107,7 @@ problem = createOptimProblem('lsqcurvefit','x0',paramsInitial,'objective',@LIF_t
             'lb',lb,'ub',ub,'xdata',freq,'ydata',rate);
         
 ms = MultiStart('PlotFcns',@gsplotbestf);
-ms.UseParallel = 'always';
+% ms.UseParallel = 'always';
 
 [xmulti(1,:),errormulti] = run(ms,problem,100);    
 
@@ -115,11 +115,17 @@ neural_params = xmulti
 
 estimate = LIF_tfreq_response(neural_params, freq);
 figure();
-plot(freq, rate, 'ro-', freq, estimate, '*-')
-title('V1 Temporal Frequency Tuning')
-xlabel('Temporal Frequency (cycles/sec)')
-ylabel('Response (Spikes / second)')
-legend('Foster et al. Data', 'Model Approximation')
+plot(freq, rate, 'bo-', freq, estimate, 'ro-', 'LineWidth', 2)
+title('Temporal Frequency Tuning', 'FontSize', 28)
+xlabel('Temporal Frequency (cycles/sec)', 'FontSize', 24)
+ylabel('Response (Spikes / second)', 'FontSize', 24)
+legend('Foster et al. Data', 'Model Approximation', 'FontSize', 16)
+
+fig = gcf;
+fig.PaperUnits = 'inches';
+fig.PaperPosition = [0 0 4.75 4.75];
+fig.PaperPositionMode = 'manual';
+print('matlab_figs/tf_tuning','-depsc','-r0')
 
 figure();
 neuronRF = gabor_time(neural_params(1), neural_params(2), theta, neural_params(3), neural_params(4), neural_params(5), fsize, dt, T);

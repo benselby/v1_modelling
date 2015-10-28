@@ -1,4 +1,4 @@
-function a = LIF_Gabor_response(gabor_params, input_data)
+function J = get_drive_current(gabor_params, input_data, input_bank, fsize)
     sig_x = gabor_params(1);
     sig_y = gabor_params(2);
     theta = gabor_params(3);
@@ -8,13 +8,10 @@ function a = LIF_Gabor_response(gabor_params, input_data)
     J_bias = gabor_params(7);
     RC_factor = gabor_params(8);
     
-    global fsize;
-    global input_bank;
-    
     neuronRF = gabor(sig_x, sig_y, theta, phi, k, fsize);
     
-    tau_ref = 0.002;
-    tau_RC = 0.05*RC_factor;
+    figure()
+    imshow(mat2gray(neuronRF))
     
     J = zeros(size(input_data,2), 1);
     for i=1:size(input_data,2)        
@@ -23,10 +20,5 @@ function a = LIF_Gabor_response(gabor_params, input_data)
         J(i) = gain*sum(sum(neuronRF.*input_img)) + J_bias; 
     end      
     
-%     J(J<0) = 0;
-%     a=J';
-     
-    J(J<1) = 0;
-    a = 1./(tau_ref - tau_RC.*log(1 - (1./J)));
-    a=a';    
+%     J(J<1) = 0;  
 end
