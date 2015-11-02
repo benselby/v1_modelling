@@ -8,7 +8,11 @@
 % This function is to be used to produce filter banks representing macaque
 % V1 orientation columns
 
-function gb=gabor(sig_x, sig_y, theta, phi, k, fsize)
+function gb=gabor(sig_x, sig_y, theta, phi, k, fsize, sine)
+
+if nargin < 7
+    sine = 0;
+end
 
 gb = zeros(fsize);
 for i=1:fsize
@@ -17,7 +21,12 @@ for i=1:fsize
        y = i - floor(fsize/2) - 1;
        Xj = x*cos(theta) - y*sin(theta);
        Yj = x*sin(theta) + y*cos(theta);
-       gb(i,j) = (1/(2*pi*sig_x*sig_y))*exp(-1*Xj^2/(2*sig_x^2) - Yj^2/(2*sig_y^2) )*cos(k*Xj-phi);
+       if sine==0
+           gb(i,j) = (1/(2*pi*sig_x*sig_y))*exp(-1*Xj^2/(2*sig_x^2) - Yj^2/(2*sig_y^2) )*cos(k*Xj-phi);
+       else
+           gb(i,j) = (1/(2*pi*sig_x*sig_y))*exp(-1*Xj^2/(2*sig_x^2) - Yj^2/(2*sig_y^2) )*sin(k*Xj-phi);
+       end
+           
    end
 end
 
