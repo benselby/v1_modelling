@@ -13,14 +13,14 @@ import matplotlib.image as mpimg
 class SSNetwork:
 
     # Default constructor - use the Rubin et al. parameters to produce a SSN layer:
-    def __init__(self, N_pairs=75, sig_EE=8, sig_IE=12, sig_EI=4, sig_II=4, J_EE=0.1, J_IE=0.38, J_EI=0.089, J_II=0.096, OP_map=0, OD_map=0):
+    def __init__(self, sig_EE=8, sig_IE=12, sig_EI=4, sig_II=4, J_EE=0.1, J_IE=0.38, J_EI=0.089, J_II=0.096, ori_map=0, ocd_map=0, N_pairs=75, field_size=16.):
 
         self.N_pairs = N_pairs # no. of E/I pairs to a side of a grid
-        self.field_size = 16. # size of field to a side (degrees)
+        self.field_size = field_size # size of field to a side (degrees)
         self.dx = field_size / N_pairs
 
         self.sig_FF = 32.
-        self.sig_RF = dx
+        self.sig_RF = self.dx
 
         self.k   = np.random.normal(0.012, 0.05*0.012, (N_pairs, N_pairs))
         self.n_E = np.random.normal(2.0, 0.05*2.0, (N_pairs, N_pairs)) 
@@ -41,13 +41,14 @@ class SSNetwork:
         self.J_EI = J_EI
         self.J_II = J_II
 
-        self.sig_EE = sig_EE*dx
-        self.sig_IE = sig_IE*dx
-        self.sig_EI = sig_EI*dx
-        self.sig_II = sig_II*dx
+        self.sig_EE = sig_EE*self.dx
+        self.sig_IE = sig_IE*self.dx
+        self.sig_EI = sig_EI*self.dx
+        self.sig_II = sig_II*self.dx
         self.sig_ori = 45.
 
-        if OP_map == 0:
+        self.OP_map = ori_map
+        if np.all(self.OP_map == 0):
             try:
                 # load OP map from Bryan's extracted Kaschube map
                 data = scipy.io.loadmat('orientation-map.mat')
@@ -55,7 +56,8 @@ class SSNetwork:
             except ValueError:
                 raise ValueError("Could not find orientation-map.mat!")
 
-        if OD_map == 0:
+        self.OD_map = ocd_map
+        if np.all(self.OD_map == 0):
             self.OD_map = load_OD_map()
 
         [self.W_EE, self.W_IE, self.W_EI, self.W_II] = generate_connetion_weights( self.N_pairs, self.field_size, self.OP_map, self.kappa_E, self.kappa_I, self.J_EE, self.J_IE, self.J_EI, self.J_II, self.sig_EE, self.sig_IE, self.sig_EI, self.sig_II, self.sig_ori, quiet=True )
@@ -99,6 +101,8 @@ class SSNetwork:
     # transition from external to network drive with dominant inhibition
     def plot_network_contrast_response(self, r_units=np.floor( 75*np.random.rand(25,2) ), c_range=np.linspace(3, 50, 12) ):
         pass
+
+
     
 def diff(x,y):
     return np.abs( np.mod( x - y + 90, 180) - 90 )
@@ -158,6 +162,7 @@ def generate_ext_stimulus(ori, size, centre, OP_map, OD_map, ocularity, sig_RF=1
         h = h * np.abs(OD_map-1)
     
     return h
+
 
 def generate_mono_stimulus(ori, size, centre, OP_map, sig_RF=16./75, sig_FF=32., fsize=16., full_frame=False):
     if centre[0] > fsize or centre[1] > fsize:
